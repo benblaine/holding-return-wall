@@ -1,0 +1,7 @@
+.git
+_prototype
+etl
+node_modules
+web/node_modules
+web/dist
+*.log

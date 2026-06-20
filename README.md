@@ -123,8 +123,10 @@ currency}`. Raw file ≈ 3.7 MB; **≈ 0.5 MB over the wire** (Vercel brotli).
 
 ## Deploy (Vercel)
 
-The app is fully static. In the Vercel project, set **Root Directory = `web`** (build `vite build`,
-output `dist`; see `web/vercel.json`). Connect the GitHub repo so the weekly data push redeploys.
+The app is fully static. The repo-root `vercel.json` builds the `web/` app
+(`npm --prefix web ci && npm --prefix web run build`, output `web/dist`), so Vercel deploys correctly
+from the repository root with no manual Root-Directory setting. Connect the GitHub repo so the weekly
+data push redeploys.
 
 The **weekly GitHub Action** (`.github/workflows/refresh.yml`) reinstalls the ETL, rebuilds
 `grid_data.json`, validates the anchors, and commits **only if the data changed**. For the EODHD
