@@ -29,3 +29,5 @@ _prototype/
 
 # logs
 *.log
+
+.vercel
