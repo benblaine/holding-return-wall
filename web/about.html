@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Methodology &middot; Holding-return wall</title>
+<meta name="description" content="How the holding-return wall is computed: rolling holding return, total return via adjusted close, base assets only, and why past returns are not forecasts."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Methodology // how to read the wall</p>
+  <h1>What the wall shows, and what it doesn't.</h1>
+  <p class="sub"><a class="navlink" href="index.html">&larr; Back to the wall</a></p>
+
+  <div class="prose">
+    <h2>Rolling holding return</h2>
+    <p>For a hold length of N years and a buy month <i>t</i>, the return is
+    <code>Price(t + N years) / Price(t)</code>, plotted at the buy month <i>t</i>. A value of
+    <code>2&times;</code> means money doubled; <code>0.5&times;</code> means it halved. Each
+    coloured line is one hold length; the curve traces how that N-year outcome changed depending
+    on <i>when</i> you bought. Because you cannot realise an N-year hold that hasn't finished yet,
+    <b>every line ends N years before the last data month</b> &mdash; a young asset simply has no
+    long-horizon lines. We never fabricate, pad, or extrapolate missing history.</p>
+
+    <h2>Total return, in USD</h2>
+    <p>Equities use <b>dividend- and split-adjusted</b> close, so the lines reflect total return,
+    not just price. Everything is denominated in US dollars. Currency tiles show the value of one
+    unit of that currency in USD. Crypto and macro series are mixed in at monthly resolution, which
+    is plenty for multi-year holds and keeps daily-vs-weekly trading calendars from fighting.</p>
+
+    <h2>Base assets only &mdash; no derivatives</h2>
+    <p>Tiles are the underlying asset itself. Metals are <b>spot</b> (gold, silver, platinum,
+    palladium), never the futures contracts and never the metal ETFs. Index funds are not tiles:
+    the <b>S&amp;P 500 total return</b> and <b>US inflation (CPI)</b> appear only as optional
+    benchmark overlays &mdash; a thin reference line on each tile plus a <code>beat S&amp;P</code> /
+    <code>beat inflation</code> badge at the active hold length.</p>
+
+    <h2>Survivorship &mdash; read with care</h2>
+    <p>The universe is a deliberately mixed, curated set: roughly a third generational winners, a
+    third famous disasters and boom-busts, a third steady tortoises, chosen so the wall teaches
+    contrast rather than &ldquo;everything goes up.&rdquo; Even so, it is a list of assets that
+    <i>exist today</i>. Companies that went to zero and delisted are largely absent, so the wall
+    still understates how badly individual bets can end. A tile that&rsquo;s awaiting its price feed
+    renders as a labelled placeholder, never a guess.</p>
+
+    <h2>Not a forecast</h2>
+    <p class="warn">These are past returns &mdash; history, not predictions. Nothing here implies
+    what any asset will do next. Long, calm-looking green stretches were not knowable in advance,
+    and the same buy date can look brilliant or ruinous depending only on the hold length you pick.
+    Use the wall to build intuition about <i>ranges</i> and <i>dispersion</i>, not to pick winners.</p>
+  </div>
+
+  <p class="foot"><a class="navlink" href="index.html">&larr; Back to the wall</a></p>
+</div>
+</body>
+</html>

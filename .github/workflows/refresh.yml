@@ -1,0 +1,55 @@
+name: refresh-grid-data
+
+# Weekly rebuild of web/public/grid_data.json (SPEC §7.5). Rolling multi-year
+# returns barely move day to day, so once a week is plenty. The push of a changed
+# data file triggers the static host's (Vercel) redeploy.
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"        # Mondays 06:17 UTC
+  workflow_dispatch: {}          # allow manual runs
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-grid-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ETL deps
+        run: pip install -r etl/requirements.txt
+
+      - name: Build grid_data.json
+        working-directory: etl
+        env:
+          # v1 default is yfinance (free, no key). To switch to the licensed EODHD
+          # feed, set a repo variable DATA_SOURCE=eodhd and add the EODHD_API_KEY secret.
+          DATA_SOURCE: ${{ vars.DATA_SOURCE || 'yfinance' }}
+          EODHD_API_KEY: ${{ secrets.EODHD_API_KEY }}
+          GRID_DATA_OUT: ../web/public/grid_data.json
+        run: python build_data.py
+
+      - name: Validate anchors (aborts the commit on a real pipeline break)
+        run: python etl/validate.py web/public/grid_data.json
+
+      - name: Commit only if the data changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- web/public/grid_data.json; then
+            echo "No data change; skipping commit."
+          else
+            git add web/public/grid_data.json
+            git commit -m "chore(data): weekly grid_data refresh"
+            git push
+          fi

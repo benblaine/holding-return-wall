@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Holding-return wall</title>
+<meta name="description" content="Rolling holding returns for ~100 base assets at 1-20 year hold lengths. Buy that month, sell N years later, what your money multiplied by. Past returns, not forecasts."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Holding-return wall // base assets // 1-20 year</p>
+  <h1>The whole universe, one wall, eight horizons.</h1>
+  <p class="sub">Each tile is one asset. Coloured lines are <b>rolling holding returns</b> at the buy date: buy that month, sell N years later, what your money multiplied by. <b>Green</b> = gain, <b>red</b> = loss, split at break-even. Toggle assets and hold lengths below; both apply to every tile at once. Hover any tile for a synced crosshair across all of them. <a class="navlink" href="about.html">Methodology &rarr;</a></p>
+  <div class="note-data">Total return where applicable (dividends &amp; splits reinvested), denominated in USD. <b>Base assets only</b> &mdash; spot metals, never futures or ETFs; the S&amp;P 500 and inflation appear only as benchmark overlays, never tiles. Long horizons thin out by design: a line ends N years before the data does, so younger assets simply have fewer lines. <b>Past returns, not forecasts.</b></div>
+
+  <div class="bar" id="bar">
+    <button class="bartoggle" id="barToggle" aria-expanded="false" aria-controls="barbody">Filters &amp; sort <span>&#9662;</span></button>
+    <div class="barbody" id="barbody">
+      <div class="row"><span class="lbl">Show</span>
+        <button class="btnx lead" id="bReal">real data</button>
+        <button class="btnx" id="bAll">all</button>
+        <button class="btnx" id="bCrypto">crypto</button>
+        <button class="btnx" id="bEquity">equities</button>
+        <button class="btnx" id="bMetal">metals</button>
+        <button class="btnx" id="bFx">currencies</button>
+        <button class="btnx" id="bNone">none</button>
+        <input class="search" id="search" placeholder="search asset or ticker..."/>
+        <span class="mini" id="count"></span>
+      </div>
+      <div class="row"><span class="lbl" style="align-self:flex-start;margin-top:5px">Assets</span><div class="chipwrap" id="assetChips"></div></div>
+      <div class="row"><span class="lbl">Hold</span>
+        <span class="chip hz" data-h="1">1-yr</span><span class="chip hz" data-h="2">2-yr</span>
+        <span class="chip hz" data-h="3">3-yr</span><span class="chip hz" data-h="4">4-yr</span>
+        <span class="chip hz" data-h="5">5-yr</span><span class="chip hz" data-h="10">10-yr</span>
+        <span class="chip hz" data-h="15">15-yr</span><span class="chip hz" data-h="20">20-yr</span>
+        <span style="width:12px"></span>
+        <span class="chip tog" id="togPrice">price overlay</span>
+        <span class="chip tog" id="togShared">shared Y scale</span>
+      </div>
+      <div class="row"><span class="lbl">Sort</span>
+        <select class="sel" id="sortMode" aria-label="Sort tiles by">
+          <option value="universe">Universe order</option>
+          <option value="latest">Latest</option>
+          <option value="best">Best-ever</option>
+          <option value="median">Median</option>
+          <option value="worst">Worst</option>
+        </select>
+        <select class="sel" id="sortHz" aria-label="Sort horizon"></select>
+        <span style="width:14px"></span>
+        <span class="lbl">Overlay</span>
+        <span class="chip tog" id="togSp">vs S&amp;P 500</span>
+        <span class="chip tog" id="togInf">vs inflation</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="sw"><i style="background:var(--green)"></i>gain &ge; 1&times;</span>
+    <span class="sw"><i style="background:var(--red)"></i>loss &lt; 1&times;</span>
+    <span class="sw"><i style="background:#33476e;border-top:2px dashed #9fabc4;height:0"></i>break-even</span>
+    <span class="sw"><i style="background:var(--amber)"></i>price</span>
+    <span class="sw"><i style="background:#b8c2d6"></i>S&amp;P / inflation overlay</span>
+    <span style="color:#5a6b8c">darker = shorter hold, brighter = longer (1y &rarr; 20y)</span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="foot">
+  <b>Method:</b> return at month <i>t</i> = Price(<i>t</i>+N&nbsp;yr) / Price(<i>t</i>); each line ends N years before the data does, so younger assets have fewer lines. Each tile's return axis auto-scales independently unless you lock a shared scale. <b>Base assets only, no derivatives.</b> Past returns, not forecasts. <a class="navlink" href="about.html">Full methodology &rarr;</a>
+  </p>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
