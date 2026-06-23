@@ -144,7 +144,11 @@ export function draw(id, target) {
   if (state.hoverYear != null && state.hoverYear >= x0 && state.hoverYear <= x1) {
     const X = px(state.hoverYear);
     g.strokeStyle = 'rgba(232,236,246,.25)'; g.lineWidth = 1; g.beginPath(); g.moveTo(X, padT); g.lineTo(X, H - padB); g.stroke();
-    const rows = []; HZ.filter(h => state.hz.has(h)).forEach(h => {
+    // Crosshair LINE is synced across every tile, but the stats box only shows on
+    // the tile under the cursor (or the fullscreen chart). Avoids it popping up on
+    // other graphs while you hover one.
+    const showTip = target ? true : (state.hoverId === id);
+    const rows = []; if (showTip) HZ.filter(h => state.hz.has(h)).forEach(h => {
       const ln = a.r[h]; if (!ln) return;
       let best = null, bd = 1e9; ln.forEach(p => { const d = Math.abs(p[0] - state.hoverYear); if (d < bd) { bd = d; best = p; } });
       if (best && bd < 0.5) rows.push([h, best[1], best[1] < 1 ? RED[h] : GREEN[h]]);

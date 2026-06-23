@@ -48,7 +48,7 @@ export function openFullscreen(id) {
 function close() {
   overlay.hidden = true;
   document.body.style.overflow = '';
-  curId = null; target.sel = null; dragging = false; state.hoverYear = null;
+  curId = null; target.sel = null; dragging = false; state.hoverYear = null; state.hoverId = null;
 }
 
 function redraw() {

@@ -13,7 +13,8 @@ export const state = {
   hz: new Set(HZ),         // active hold lengths
   price: true,             // amber price overlay
   shared: false,           // shared vs per-tile Y scale
-  hoverYear: null,         // synced crosshair decimal-year
+  hoverYear: null,         // synced crosshair decimal-year (shown on every tile)
+  hoverId: null,           // id of the tile under the cursor (stats box shows only here)
   sort: 'universe',        // universe | latest | best | median | worst
   sortH: null,             // pinned sort horizon ('5'...) or null => longest active
   ovSp: false,             // vs S&P 500 overlay

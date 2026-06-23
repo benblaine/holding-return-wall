@@ -54,11 +54,11 @@ function buildCards() {
       card.appendChild(exp);
       const cv = document.createElement('canvas'); card.appendChild(cv);
       ctx.cards[a.id] = { card, cv, badges };
-      const move = clientX => { const r = cv.getBoundingClientRect(); state.hoverYear = invX((clientX - r.left) / r.width); rafRedraw(); };
+      const move = clientX => { const r = cv.getBoundingClientRect(); state.hoverYear = invX((clientX - r.left) / r.width); state.hoverId = a.id; rafRedraw(); };
       cv.addEventListener('mousemove', e => move(e.clientX));
-      cv.addEventListener('mouseleave', () => { state.hoverYear = null; rafRedraw(); });
+      cv.addEventListener('mouseleave', () => { state.hoverYear = null; state.hoverId = null; rafRedraw(); });
       cv.addEventListener('touchmove', e => { if (e.touches[0]) move(e.touches[0].clientX); }, { passive: true });
-      cv.addEventListener('touchend', () => { state.hoverYear = null; rafRedraw(); });
+      cv.addEventListener('touchend', () => { state.hoverYear = null; state.hoverId = null; rafRedraw(); });
     } else {
       const pb = document.createElement('div'); pb.className = 'phbox';
       pb.innerHTML = `<span class="big">&#9633;</span>awaiting price feed<span style="color:#36465f">spot metal &middot; feed pending</span>`;
