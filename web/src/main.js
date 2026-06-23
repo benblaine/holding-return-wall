@@ -4,6 +4,7 @@ import { state, ctx, decodeURL, encodeURL } from './state.js';
 import { loadData } from './data.js';
 import { draw, invX } from './render.js';
 import { initControls, applySort, refreshBadges } from './controls.js';
+import { initFullscreen, openFullscreen } from './fullscreen.js';
 
 const grid = document.getElementById('grid');
 
@@ -46,6 +47,11 @@ function buildCards() {
     card.innerHTML = `<h3>${a.name}<span class="tag ${a.cls}">${a.cls}</span></h3><div class="badges"></div><div class="meta">${since}</div>`;
     const badges = card.querySelector('.badges');
     if (a.hasData) {
+      const exp = document.createElement('button');
+      exp.className = 'expand'; exp.type = 'button'; exp.title = 'Full screen';
+      exp.setAttribute('aria-label', `Open ${a.name} full screen`); exp.innerHTML = '&#9974;';
+      exp.addEventListener('click', () => openFullscreen(a.id));
+      card.appendChild(exp);
       const cv = document.createElement('canvas'); card.appendChild(cv);
       ctx.cards[a.id] = { card, cv, badges };
       const move = clientX => { const r = cv.getBoundingClientRect(); state.hoverYear = invX((clientX - r.left) / r.width); rafRedraw(); };
@@ -103,6 +109,7 @@ async function boot() {
   buildCards();
   setupIO();
   initControls(app);
+  initFullscreen();
   applySort();
   refreshBadges();
   sync();

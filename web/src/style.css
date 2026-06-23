@@ -80,6 +80,42 @@ canvas{width:100%;display:block;cursor:crosshair;touch-action:none}
 .prose .warn{color:#f2c14e;font-weight:600}
 .prose ul{padding-left:20px;margin:0 0 12px}.prose li{margin:3px 0}
 
+/* per-tile full-screen button */
+.expand{position:absolute;top:8px;right:8px;z-index:2;width:24px;height:24px;display:flex;
+  align-items:center;justify-content:center;padding:0;font-size:14px;line-height:1;
+  border:1px solid var(--grid);border-radius:7px;background:rgba(8,12,22,.7);color:#6c7b9c;
+  cursor:pointer;opacity:0;transition:.12s}
+.card:hover .expand,.expand:focus-visible{opacity:1}
+.expand:hover{color:#cdd6ea;border-color:#33476e;background:rgba(13,20,38,.92)}
+@media(hover:none){.expand{opacity:.85}}
+
+/* full-screen overlay */
+.fsoverlay{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
+  padding:clamp(12px,3vw,40px);background:rgba(4,7,14,.82);backdrop-filter:blur(6px)}
+.fsoverlay[hidden]{display:none}
+.fsmodal{display:flex;flex-direction:column;width:min(1200px,100%);height:min(820px,100%);
+  background:linear-gradient(180deg,var(--panel) 0%,#0a1120 100%);border:1px solid var(--grid);
+  border-radius:15px;box-shadow:0 24px 80px rgba(0,0,0,.6);padding:16px 16px 13px}
+.fshead{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.fstitle{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:500;font-size:18px;min-width:0}
+.fstitle #fsName{display:inline-flex;align-items:center;gap:8px}
+.fsmeta{font-family:'IBM Plex Mono';font-size:11px;color:#5a6b8c;white-space:nowrap}
+.fsclose{margin-left:auto;width:32px;height:32px;flex:none;font-size:22px;line-height:1;
+  border:1px solid var(--grid);border-radius:9px;background:var(--panel);color:var(--mut);cursor:pointer}
+.fsclose:hover{color:#cdd6ea;border-color:#33476e}
+.fscanvaswrap{flex:1;min-height:0;position:relative}
+#fsCanvas{width:100%;height:100%;display:block;cursor:crosshair;touch-action:none}
+.fsfoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:30px;margin-top:11px}
+.fshint{font-family:'IBM Plex Mono';font-size:11.5px;color:var(--mut)}
+.fsnews{font-family:'IBM Plex Mono';font-size:12px;font-weight:500;text-decoration:none;
+  padding:7px 13px;border-radius:8px;background:var(--amber);color:#1a0f00;border:1px solid var(--amber)}
+.fsnews:hover{filter:brightness(1.08)}
+.fsnews[hidden]{display:none}
+@media(max-width:720px){
+  .fsmodal{height:100%;border-radius:12px;padding:12px}
+  .fstitle{font-size:16px}
+}
+
 /* mobile: 1 column + control-bar drawer (§7.6) */
 .bartoggle{display:none}
 @media(max-width:720px){

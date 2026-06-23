@@ -14,7 +14,7 @@
 <div class="wrap">
   <p class="eyebrow">Holding-return wall // base assets // 1-20 year</p>
   <h1>The whole universe, one wall, eight horizons.</h1>
-  <p class="sub">Each tile is one asset. Coloured lines are <b>rolling holding returns</b> at the buy date: buy that month, sell N years later, what your money multiplied by. <b>Green</b> = gain, <b>red</b> = loss, split at break-even. Toggle assets and hold lengths below; both apply to every tile at once. Hover any tile for a synced crosshair across all of them. <a class="navlink" href="about.html">Methodology &rarr;</a></p>
+  <p class="sub">Each tile is one asset. Coloured lines are <b>rolling holding returns</b> at the buy date: buy that month, sell N years later, what your money multiplied by. <b>Green</b> = gain, <b>red</b> = loss, split at break-even. Toggle assets and hold lengths below; both apply to every tile at once. Hover any tile for a synced crosshair across all of them, or hit <b>&#9974; full screen</b> to enlarge one and drag-select a period for news. <a class="navlink" href="about.html">Methodology &rarr;</a></p>
   <div class="note-data">Total return where applicable (dividends &amp; splits reinvested), denominated in USD. <b>Base assets only</b> &mdash; spot metals, never futures or ETFs; the S&amp;P 500 and inflation appear only as benchmark overlays, never tiles. Long horizons thin out by design: a line ends N years before the data does, so younger assets simply have fewer lines. <b>Past returns, not forecasts.</b></div>
 
   <div class="bar" id="bar">
@@ -73,6 +73,21 @@
   <b>Method:</b> return at month <i>t</i> = Price(<i>t</i>+N&nbsp;yr) / Price(<i>t</i>); each line ends N years before the data does, so younger assets have fewer lines. Each tile's return axis auto-scales independently unless you lock a shared scale. <b>Base assets only, no derivatives.</b> Past returns, not forecasts. <a class="navlink" href="about.html">Full methodology &rarr;</a>
   </p>
 </div>
+
+<div class="fsoverlay" id="fsOverlay" hidden>
+  <div class="fsmodal">
+    <div class="fshead">
+      <div class="fstitle"><span id="fsName"></span><span class="fsmeta" id="fsMeta"></span></div>
+      <button class="fsclose" id="fsClose" type="button" aria-label="Close full screen">&times;</button>
+    </div>
+    <div class="fscanvaswrap"><canvas id="fsCanvas"></canvas></div>
+    <div class="fsfoot">
+      <span class="fshint" id="fsHint">Drag across the chart to pick a period, then open the news from that time &rarr;</span>
+      <a class="fsnews" id="fsNews" target="_blank" rel="noopener noreferrer" hidden></a>
+    </div>
+  </div>
+</div>
+
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

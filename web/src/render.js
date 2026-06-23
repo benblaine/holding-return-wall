@@ -70,14 +70,30 @@ function drawBaselines(g, a, px, yr, x0) {
   }
 }
 
-export function draw(id) {
-  const a = ctx.byId[id], C = ctx.cards[id]; if (!a || !a.hasData || !C.cv) return;
-  const cv = C.cv; const cssW = C.card.clientWidth - 20, cssH = 176;
+// draw(id) paints into the tile's own canvas; draw(id, target) paints into an
+// arbitrary canvas (used by the fullscreen view). target = { cv, cssW, cssH,
+// focus?, sel? } — focus scopes the x-axis to this asset alone, sel draws a
+// selected period band, and draw() writes the x-mapping geometry back to
+// target._geom so the caller can invert clicks -> decimal years.
+export function draw(id, target) {
+  const a = ctx.byId[id]; if (!a || !a.hasData) return;
+  let cv, cssW, cssH;
+  if (target) {
+    cv = target.cv; cssW = target.cssW; cssH = target.cssH;
+    if (!cv || !cssW || !cssH) return;
+  } else {
+    const C = ctx.cards[id]; if (!C || !C.cv) return;
+    cv = C.cv; cssW = C.card.clientWidth - 20; cssH = 176;
+  }
+  const big = cssH > 300;                       // fullscreen => scale type, padding, line weight up
+  const fpx = big ? 12 : 9, lw = big ? 1.5 : 1;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = cssW * dpr; cv.height = cssH * dpr; cv.style.height = cssH + 'px';
+  cv.width = cssW * dpr; cv.height = cssH * dpr; if (!target) cv.style.height = cssH + 'px';
   const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, cssW, cssH);
-  const padL = 38, padR = state.price ? 32 : 12, padT = 8, padB = 18, W = cssW, H = cssH;
-  const [x0, x1] = xdom(); const px = x => padL + (x - x0) / (x1 - x0) * (W - padL - padR);
+  const padL = big ? 52 : 38, padR = state.price ? (big ? 44 : 32) : (big ? 20 : 12), padT = big ? 14 : 8, padB = big ? 28 : 18, W = cssW, H = cssH;
+  const [x0, x1] = (target && target.focus) ? [a.inc, ctx.XMAX] : xdom();
+  const px = x => padL + (x - x0) / (x1 - x0) * (W - padL - padR);
+  if (target) target._geom = { x0, x1, padL, padR, W };
   let rlo, rhi;
   if (state.shared) { [rlo, rhi] = sharedYdom(); }
   else {
@@ -88,12 +104,12 @@ export function draw(id) {
   let plo = 1e9, phi = -1e9; a.p.forEach(p => { const L = Math.log10(p[1]); if (L < plo) plo = L; if (L > phi) phi = L; });
   const yp = v => { let L = Math.log10(v); L = Math.max(plo, Math.min(phi, L)); return padT + (1 - (L - plo) / (phi - plo)) * (H - padT - padB); };
   // grid x
-  g.font = "9px 'IBM Plex Mono'"; g.fillStyle = '#54627e';
+  g.font = fpx + "px 'IBM Plex Mono'"; g.fillStyle = '#54627e';
   const span = x1 - x0, step = span > 18 ? 4 : (span > 9 ? 3 : 2);
   for (let yy = Math.ceil(x0 / step) * step; yy <= x1; yy += step) {
     const X = px(yy);
     g.beginPath(); g.moveTo(X, padT); g.lineTo(X, H - padB); g.strokeStyle = 'rgba(27,39,66,.4)'; g.lineWidth = 1; g.stroke();
-    g.fillText("'" + String(yy).slice(2), X - 7, H - 6);
+    g.fillText("'" + String(yy).slice(2), X - fpx * 0.8, H - (big ? 9 : 6));
   }
   for (let e = Math.ceil(rlo); e <= Math.floor(rhi); e++) {
     const Y = yr(Math.pow(10, e));
@@ -104,10 +120,10 @@ export function draw(id) {
   g.setLineDash([4, 4]); g.strokeStyle = 'rgba(159,171,196,.6)'; g.lineWidth = 1.2;
   g.beginPath(); g.moveTo(padL, yr(1)); g.lineTo(W - padR, yr(1)); g.stroke(); g.setLineDash([]);
   if (state.price) {
-    g.strokeStyle = 'rgba(247,147,26,.5)'; g.lineWidth = 1.2; g.beginPath(); let st = false;
+    g.strokeStyle = 'rgba(247,147,26,.5)'; g.lineWidth = 1.2 * lw; g.beginPath(); let st = false;
     a.p.forEach(p => { if (p[0] < x0) return; const X = px(p[0]), Y = yp(p[1]); st ? g.lineTo(X, Y) : (g.moveTo(X, Y), st = true); }); g.stroke();
   }
-  g.lineWidth = 1.7;
+  g.lineWidth = big ? 2.3 : 1.7;
   HZ.filter(h => state.hz.has(h)).forEach(h => {
     const ln = a.r[h]; if (!ln) return;
     for (let i = 1; i < ln.length; i++) {
@@ -117,6 +133,14 @@ export function draw(id) {
     }
   });
   drawBaselines(g, a, px, yr, x0);   // §7.3 overlays (no-op unless toggled)
+  if (target && target.sel) {        // fullscreen period selection band
+    const sa = Math.max(x0, Math.min(x1, Math.min(target.sel.a, target.sel.b)));
+    const sb = Math.max(x0, Math.min(x1, Math.max(target.sel.a, target.sel.b)));
+    const Xa = px(sa), Xb = px(sb);
+    g.fillStyle = 'rgba(96,140,210,.15)'; g.fillRect(Xa, padT, Xb - Xa, H - padT - padB);
+    g.strokeStyle = 'rgba(150,180,230,.8)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(Xa, padT); g.lineTo(Xa, H - padB); g.moveTo(Xb, padT); g.lineTo(Xb, H - padB); g.stroke();
+  }
   if (state.hoverYear != null && state.hoverYear >= x0 && state.hoverYear <= x1) {
     const X = px(state.hoverYear);
     g.strokeStyle = 'rgba(232,236,246,.25)'; g.lineWidth = 1; g.beginPath(); g.moveTo(X, padT); g.lineTo(X, H - padB); g.stroke();
@@ -126,12 +150,12 @@ export function draw(id) {
       if (best && bd < 0.5) rows.push([h, best[1], best[1] < 1 ? RED[h] : GREEN[h]]);
     });
     if (rows.length) {
-      const bw = 72, bh = 11 * rows.length + 8; let bx = X + 6; if (bx + bw > W - 2) bx = X - bw - 6;
+      const lh = fpx + 2, bw = big ? 100 : 72, bh = lh * rows.length + 8; let bx = X + 6; if (bx + bw > W - 2) bx = X - bw - 6;
       g.fillStyle = 'rgba(8,12,22,.93)'; g.strokeStyle = '#2a3a5e'; g.lineWidth = 1; g.beginPath(); g.rect(bx, padT + 2, bw, bh); g.fill(); g.stroke();
-      g.textAlign = 'left'; g.font = "9px 'IBM Plex Mono'";
+      g.textAlign = 'left'; g.font = fpx + "px 'IBM Plex Mono'";
       rows.forEach((r, i) => {
         g.fillStyle = r[2]; const v = r[1] >= 10 ? Math.round(r[1]) + '×' : r[1].toFixed(r[1] < 1 ? 2 : 1) + '×';
-        g.fillText(r[0] + 'y  ' + v, bx + 5, padT + 13 + i * 11);
+        g.fillText(r[0] + 'y  ' + v, bx + 5, padT + lh + 3 + i * lh);
       });
     }
   }
